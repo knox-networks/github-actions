@@ -9,6 +9,11 @@ This repository maintains the shared Github Actions workflows and action steps f
   subdirectories based on tech stack. However, reusable workflows and actions exist in `.github/workflows` and
   `.github/actions` respectively.
 
+## Changelog
+
+_A complete Changelog history can be found in [github-actions/CHANGELOG.md](CHANGELOG.md)._
+
+
 ## Workflow Development and Versioning
 
 Since this repository contains multiple reusable workflows, etc. it is best to do any callable workflow development in
