@@ -13,7 +13,11 @@ This repository maintains the shared Github Actions workflows and action steps f
 
 ## Usage
 
+* Reference workflows from this repo via `uses: knox-networks/github-actions/.github/workflows/...`.
+* Prefix caller jobs in private workflows with `call-`.
+
 ```yaml
+# Private workflow in another repository...
 jobs:
   call-terraform-module-build:
     name: CI
