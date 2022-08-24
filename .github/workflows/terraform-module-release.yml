@@ -1,0 +1,72 @@
+name: Terraform Module Release Workflow
+
+on:
+  workflow_call:
+    inputs:
+      aws-region:
+        type: string
+        description: AWS Region for Terraform state, etc. (i.e. us-east-1).
+        required: true
+      module-name:
+        type: string
+        description: Terraform Module name.
+        required: true
+    secrets:
+      deploy-role-arn:
+        description: IAM Role ARN to assume for deploy-related tasks.
+        required: true
+
+permissions:
+  id-token: write
+  contents: write
+
+jobs:
+  deploy:
+    name: Deploy to S3
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Authenticate AWS CLI
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          role-to-assume: ${{ secrets.deploy-role-arn }}
+          aws-region: ${{ inputs.aws-region }}
+
+      - name: Build Module Archive File
+        run: make module.package
+
+      - name: Deploy to S3 Registry
+        run: |
+          MODULE_VERSION=$(cat VERSION)
+          aws s3 cp .build/$MODULE_VERSION.zip \
+            s3://knox.us-east-2.tfmodule-registry/${{ inputs.module-name }}/$MODULE_VERSION.zip
+
+  tag_repo:
+    name: Tag Repo
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Tag Repo with VERSION
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const fs = require("fs");
+
+            var repoTag = fs.readFile("VERSION", (err, data) => {
+              if (err) throw err;
+
+              var version = data.toString().trim();
+              var repoTag = `refs/tags/${version}`;
+
+              github.rest.git.createRef({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                ref: repoTag,
+                sha: context.sha
+              });
+            });
+
