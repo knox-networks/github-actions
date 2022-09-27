@@ -56,17 +56,26 @@ jobs:
           script: |
             const fs = require("fs");
 
-            var repoTag = fs.readFile("VERSION", (err, data) => {
-              if (err) throw err;
+            var repoTag = fs.readFileSync('VERSION', {encoding: 'utf8'}).trim();
 
-              var version = data.toString().trim();
-              var repoTag = `refs/tags/${version}`;
-
-              github.rest.git.createRef({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                ref: repoTag,
-                sha: context.sha
-              });
+            github.rest.git.createRef({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              ref: `refs/tags/${repoTag}`,
+              sha: context.sha
             });
+
+# var repoTag = fs.readFile("VERSION", (err, data) => {
+#   if (err) throw err;
+
+#   var version = data.toString().trim();
+#   var repoTag = `refs/tags/${version}`;
+
+#   github.rest.git.createRef({
+#     owner: context.repo.owner,
+#     repo: context.repo.repo,
+#     ref: repoTag,
+#     sha: context.sha
+#   });
+# });
 
