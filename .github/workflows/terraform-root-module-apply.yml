@@ -1,0 +1,44 @@
+name: Terraform Root Module Apply Workflow
+
+on:
+  workflow_call:
+    inputs:
+      aws-region:
+        type: string
+        description: AWS Region for Terraform state, etc. (i.e. us-east-1).
+        required: true
+    secrets:
+      build-role-arn:
+        description: IAM Role ARN to assume for build-related tasks.
+        required: true
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  terraform-apply:
+    name: Terraform Apply
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v2
+
+      - name: Authenticate AWS CLI
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          role-to-assume: ${{ secrets.build-role-arn }}
+          aws-region: ${{ inputs.aws-region }}
+
+      - name: Terraform Init
+        run: terraform init
+
+      - name: Terraform Plan
+        run: terraform plan -out=apply.plan
+
+      - name: Terraform Apply
+        run: terraform apply apply.plan
+
