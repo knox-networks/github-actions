@@ -6,10 +6,10 @@ This repository maintains the shared Github Actions workflows and action steps f
 
 * **_THIS IS A PUBLIC REPOSITORY. BE VERY CAREFUL NOT TO EXPOSE SENSITIVE ORGANIZATIONAL DETAILS SUCH AS ACCOUNT_**
   **_NUMBERS, ETC. THESE ITEMS SHOULD BE PROVIDED VIA SECRETS VARIABLES AND INJECTED VIA PRIVATE CALLER WORKFLOWS._**
-* Currently, GitHub requires that shared workflows in remote repositories maintain the same `.github` directory
-  structure as if the workflow existed in the calling repository. It would be helpful to organize workflows in various
-  subdirectories based on tech stack. However, reusable workflows and actions exist in `.github/workflows` and
-  `.github/actions` respectively.
+* It would be helpful to organize the workflows and actions within this repository by subdirectory based on associated
+  tech stack. However, GitHub requires that shared workflows in remote repositories maintain the same `.github`
+  directory structure as if the workflow existed in the calling repository. Therefore, the reusable actions and
+  workflows in this repository must exist in the `.github/actions` and `.github/workflows` directories respectively.
 
 ## Usage
 
