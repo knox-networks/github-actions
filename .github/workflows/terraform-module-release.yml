@@ -21,27 +21,27 @@ permissions:
   contents: write
 
 jobs:
-  # deploy:
-  #   name: Deploy to S3
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - name: Checkout
-  #       uses: actions/checkout@v3
+  deploy:
+    name: Deploy to S3
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
 
-  #     - name: Authenticate AWS CLI
-  #       uses: aws-actions/configure-aws-credentials@v1
-  #       with:
-  #         role-to-assume: ${{ secrets.deploy-role-arn }}
-  #         aws-region: ${{ inputs.aws-region }}
+      - name: Authenticate AWS CLI
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          role-to-assume: ${{ secrets.deploy-role-arn }}
+          aws-region: ${{ inputs.aws-region }}
 
-  #     - name: Build Module Archive File
-  #       run: make module.package
+      - name: Build Module Archive File
+        run: make module.package
 
-  #     - name: Deploy to S3 Registry
-  #       run: |
-  #         MODULE_VERSION=$(cat VERSION)
-  #         aws s3 cp .build/$MODULE_VERSION.zip \
-  #           s3://knox.us-east-2.tfmodule-registry/${{ inputs.module-name }}/$MODULE_VERSION.zip
+      - name: Deploy to S3 Registry
+        run: |
+          MODULE_VERSION=$(cat VERSION)
+          aws s3 cp .build/$MODULE_VERSION.zip \
+            s3://knox.us-east-2.tfmodule-registry/${{ inputs.module-name }}/$MODULE_VERSION.zip
 
   tag_repo:
     name: Tag Repo
@@ -64,18 +64,3 @@ jobs:
               ref: `refs/tags/${repoTag}`,
               sha: context.sha
             });
-
-# var repoTag = fs.readFile("VERSION", (err, data) => {
-#   if (err) throw err;
-
-#   var version = data.toString().trim();
-#   var repoTag = `refs/tags/${version}`;
-
-#   github.rest.git.createRef({
-#     owner: context.repo.owner,
-#     repo: context.repo.repo,
-#     ref: repoTag,
-#     sha: context.sha
-#   });
-# });
-
