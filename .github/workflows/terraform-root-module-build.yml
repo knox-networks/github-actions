@@ -43,4 +43,4 @@ jobs:
 
       - name: Terraform Plan
         if: ${{ inputs.run-plan }}
-        run: terraform plan -out=apply.plan
+        run: terraform init && terraform plan -out=apply.plan
