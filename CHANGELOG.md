@@ -3,6 +3,11 @@
 _The following sections summarize the changes made throughout this project and the approximate date each of the changes_
 _were made._
 
+## [11/21/2022]
+
+* `terraform-root-module-build.yml`
+  * Fixes missing `terraform init` call in "Terraform Plan" step.
+
 ## [09/27/2022]
 
 * `terraform-root-module-build.yml`
