@@ -1,3 +1,4 @@
+<!-- markdownlint-disable MD024 -->
 # slack-notify-workflow-invoked / slack-notify-workflow-finished
 
 This document describes the usage details for the `slack-notify-workflow-invoked` and `slack-notify-workflow-finished`
