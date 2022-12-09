@@ -1,0 +1,47 @@
+name: Notify Slack - Workflow Finished
+
+on:
+  workflow_call:
+    inputs:
+      workflow-succeeded:
+        type: boolean
+        description: Boolean value indicating whether or not all of the prior workflow steps have succeeded or failed.
+        required: true
+      slack-message-id:
+        type: string
+        description: |
+          Slack Message ID (from notify-slack-workflow-invoked). Providing this value will overwrite the initial
+          STARTED message with a SUCCESS/FAILED to reduce overall channel noise.
+        required: false
+    secrets:
+      slack-bot-token:
+        description: Slack Bot channel authentication token.
+        required: true
+
+jobs:
+  notify-slack:
+    name: Workflow Finished
+    runs-on: ubuntu-latest
+    steps:
+      - name: Notify Success
+        if: ${{ inputs.workflow-succeeded }}
+        uses: klamas1/github-action-slack-notify-build@v3
+        with:
+          channel_id: C0484JLAX9N
+          status: SUCCESS
+          color: good
+          message_id: ${{ inputs.slack-message-id }}
+        env:
+          SLACK_BOT_TOKEN: ${{ secrets.slack-bot-token }}
+
+      - name: Notify Failure
+        if: ${{ !inputs.workflow-succeeded }}
+        uses: klamas1/github-action-slack-notify-build@v3
+        with:
+          channel_id: C0484JLAX9N
+          status: FAILED
+          color: danger
+          message_id: ${{ inputs.slack-message-id }}
+        env:
+          SLACK_BOT_TOKEN: ${{ secrets.slack-bot-token }}
+

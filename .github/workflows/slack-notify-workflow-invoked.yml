@@ -1,0 +1,29 @@
+name: Notify Slack - Workflow Invoked
+
+on:
+  workflow_call:
+    secrets:
+      slack-bot-token:
+        description: Slack Bot channel authentication token.
+        required: true
+    outputs:
+      slack-message-id:
+        description: Slack Bot message ID.
+        value: ${{ jobs.notify-slack.outputs.message-id }}
+
+jobs:
+  notify-slack:
+    name: Workflow Invoked
+    runs-on: ubuntu-latest
+    outputs:
+      message-id: ${{ steps.notify-slack.outputs.message_id }}
+    steps:
+      - name: Notify Slack
+        id: notify-slack
+        uses: klamas1/github-action-slack-notify-build@v3
+        with:
+          channel_id: C0484JLAX9N
+          status: STARTED
+          color: good
+        env:
+          SLACK_BOT_TOKEN: ${{ secrets.slack-bot-token }}
