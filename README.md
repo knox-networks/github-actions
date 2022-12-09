@@ -13,21 +13,15 @@ This repository maintains the shared Github Actions workflows and action steps f
 
 ## Usage
 
-* Reference workflows from this repo via `uses: knox-networks/github-actions/.github/workflows/...`.
-* Prefix caller jobs in private workflows with `call-`.
+### Actions
 
-```yaml
-# Private workflow in another repository...
-jobs:
-  call-terraform-module-build:
-    name: CI
-    uses: knox-networks/github-actions/.github/workflows/terraform-module-build.yml@main
-    with:
-      aws-region: us-east-2
-      apply-examples-ci: true
-    secrets:
-      build-role-arn: arn:aws:iam::000000000000:role/role-to-assume
-```
+* [build-container](./.github/actions/build-container/README.md)
+* [build-helm-package](./.github/actions/build-helm-package/README.md)
+
+### Workflows
+
+* [slack-notify-workflow-invoked](./.github/workflows/slack-notify-workflow-README.md)
+* [slack-notify-workflow-finished](./.github/workflows/slack-notify-workflow-README.md)
 
 ## Workflow Development and Versioning
 
@@ -47,6 +41,9 @@ for multiple scenarios.
   workflow file name since we cannot version workflows independently (via repo tags). For example:
   * `terraform-module-build-v2.yml`
   * `terraform-module-release-v2.yml`
+* Provide a README file that includes a description, usage example(s) and any design notes related to your callable
+  workflows.
+* Prefix workflows called from this repository with `call-`.
 
 ## Changelog
 

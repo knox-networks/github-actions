@@ -3,6 +3,17 @@
 _The following sections summarize the changes made throughout this project and the approximate date each of the changes_
 _were made._
 
+## [12/08/2022]
+
+* `slack-notification-workflow-invoked.yml`
+  * Workflow introduced to notify corporate Slack `#development` channel of invoked workflow events.
+* `slack-notification-workflow-finished.yml`
+  * Workflow introduced to notify corporate Slack `#development` channel of finished workflow events.
+* `action/build-container`
+  * Action introduced to build container images and (if caller opts-in) pushes the image to ECR.
+* `action/build-helm-package`
+  * Action introduced to build Helm chart packages and publish to the corporate Helm chart registry.
+
 ## [11/21/2022]
 
 * `terraform-root-module-build.yml`

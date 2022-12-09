@@ -1,12 +1,12 @@
 <!-- markdownlint-disable MD024 -->
-# slack-notify-workflow-invoked / slack-notify-workflow-finished
+# slack-notify-workflow-invoked / slack-notify-workflow-finished Workflows
 
 This document describes the usage details for the `slack-notify-workflow-invoked` and `slack-notify-workflow-finished`
 callable workflows. These two workflows are designed to act as bookends to existing GHA workflows to notify of `started`
 and `finished` events rather than having to inject inline Slack notification actions throughout various stages/jobs of
 your GHA pipelines.
 
-## slack-notify-workflow-invoked
+## slack-notify-workflow-invoked Workflow
 
 The `slack-notify-workflow-invoked` GHA workflow is a callable workflow intended to update the corporate `#deployment`
 Slack channel that a GHA workflow has been started. This workflow is intended to be called as the _very first job_
@@ -35,7 +35,7 @@ jobs:
 |--------------------|----------------------------------------------------------------------------|
 | `slack-message-id` | Slack channel message ID (to be used in `slack-notify-workflow-finished`). |
 
-## slack-notify-workflow-finished
+## slack-notify-workflow-finished Workflow
 
 The `slack-notify-workflow-finished` GHA workflow is a callable workflow intended to notify the corporate `#deployment`
 Slack channel that a GHA workflow has finished with either a `success` or `failure` result.
