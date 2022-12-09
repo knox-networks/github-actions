@@ -1,4 +1,4 @@
-# build-container
+# build-container Action
 
 The `build-container` GHA action builds a container image given a `Dockerfile` and pushes the image to its ECR
 repository. Each image is tagged with its corresponding GitHub commit hash as well as the `latest` tag.

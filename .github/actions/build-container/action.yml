@@ -1,5 +1,5 @@
 name: Build Container
-description: Builds a container image and pushes to ECR.
+description: Builds a container image and (if caller opts-in) pushes the image to ECR.
 
 inputs:
   aws-ecr-repo-name:
@@ -19,7 +19,10 @@ inputs:
     default: ./Dockerfile
     required: false
   push-image:
-    description: Boolean indicating whether or not to push the container image to ECR.
+    description: |
+      Boolean indicating whether or not to push the container image to ECR. This GHA action defaults to "false"
+      primarily for PR build workflows where ongoing development is still occurring. For release workflows, after the PR
+      is merged, set this value to "true".
     default: "false"
     required: false
 
