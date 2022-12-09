@@ -1,0 +1,57 @@
+name: Build Container
+description: Builds a container image and pushes to ECR.
+
+inputs:
+  aws-ecr-repo-name:
+    description: ECR repository name.
+    required: true
+  # TODO: We should default this when GitHub allows for private actions/workflows repos for non-enterprise customers...
+  aws-build-role-arn:
+    description: IAM Role ARN to assume for ECR-related tasks.
+    required: true
+  # Optional Inputs
+  aws-region:
+    description: AWS Region for ECR Repo access.
+    default: us-east-2
+    required: false
+  dockerfile-path:
+    description: Path to target Dockerfile.
+    default: ./Dockerfile
+    required: false
+  push-image:
+    description: Boolean indicating whether or not to push the container image to ECR.
+    default: "false"
+    required: false
+
+runs:
+  using: composite
+  steps:
+    - name: Build Docker Image
+      shell: bash
+      run: docker build -f ${{ inputs.dockerfile-path }} -t ${{ inputs.aws-ecr-repo-name }}:latest .
+
+    - name: Authenticate via AWS IAM OIDC Provider
+      uses: aws-actions/configure-aws-credentials@v1-node16
+      if: ${{ inputs.push-image != 'false' }}
+      with:
+        role-to-assume: ${{ inputs.aws-build-role-arn }}
+        role-session-name: ${{ inputs.aws-ecr-repo-name }}
+        aws-region: ${{ inputs.aws-region }}
+
+    - name: Login to Amazon ECR
+      id: ecr-login
+      uses: aws-actions/amazon-ecr-login@v1
+      if: ${{ inputs.push-image != 'false' }}
+
+    - name: Push to Amazon ECR
+      shell: bash
+      if: ${{ inputs.push-image != 'false' }}
+      env:
+        LOCAL_TAG: ${{ format('{0}:{1}', inputs.aws-ecr-repo-name, 'latest')}}
+        SHA_TAG: ${{ format('{0}/{1}:{2}', steps.ecr-login.outputs.registry, inputs.aws-ecr-repo-name, github.sha) }}
+        LATEST_TAG: ${{ format('{0}/{1}:{2}', steps.ecr-login.outputs.registry, inputs.aws-ecr-repo-name, 'latest') }}
+      run: |
+        docker tag $LOCAL_TAG $SHA_TAG
+        docker tag $LOCAL_TAG $LATEST_TAG
+        docker push $SHA_TAG
+        docker push $LATEST_TAG
