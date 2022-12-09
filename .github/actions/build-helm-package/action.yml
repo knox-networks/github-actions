@@ -1,0 +1,46 @@
+name: Build Helm Package
+description: Builds and publishes a Helm chart package to Knox's S3 registry.
+
+inputs:
+  # TODO: We should default this when GitHub allows for private actions/workflows repos for non-enterprise customers...
+  aws-build-role-arn:
+    description: IAM Role ARN to assume for ECR-related tasks.
+    required: true
+  helm-directory:
+    description: Helm chart directory (within current repo).
+    required: true
+  helm-package-name:
+    description: Helm chart package name.
+    required: true
+  # Optional Inputs
+  aws-region:
+    description: AWS Region for S3 repository access.
+    default: us-east-2
+    required: false
+  helm-repo-name:
+    description: Helm repository name (within the Helm registry).
+    default: knox
+    required: false
+
+runs:
+  using: composite
+  steps:
+    - name: Install Helm
+      shell: bash
+      run: sudo snap install helm --classic
+
+    - name: Authenticate via AWS IAM OIDC Provider
+      uses: aws-actions/configure-aws-credentials@v1-node16
+      with:
+        role-to-assume: ${{ inputs.aws-build-role-arn }}
+        role-session-name: ${{ inputs.aws-ecr-repo-name }}
+        aws-region: ${{ inputs.aws-region }}
+
+    - name: helm package deploy
+      shell: bash
+      run: |
+        helm plugin install https://github.com/hypnoglow/helm-s3.git --version 0.14.0 || echo "plugin already installed"
+        helm repo add ${{ inputs.helm-repo-name }} s3://knox.us-east-2.helm-registry/${{ inputs.helm-repo-name }}
+        helm package ${{ inputs.helm-directory }}
+        helm s3 push --force ${{ inputs.helm-package-name }}-*.tgz ${{ inputs.helm-repo-name }}
+
