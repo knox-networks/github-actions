@@ -17,6 +17,7 @@ This repository maintains the shared Github Actions workflows and action steps f
 
 * [build-container](./.github/actions/build-container/README.md)
 * [build-helm-package](./.github/actions/build-helm-package/README.md)
+* [build-helm-package-v2](./.github/actions/build-helm-package-v2/README.md)
 
 ### Workflows
 
