@@ -1,7 +1,5 @@
 name: Build Helm Package
-description: |
-  Builds and publishes a Helm chart package to Knox's S3 Helm registry. Additionally, this action pushes a Helm chart
-  package to Knox's legacy S3 registry (required until a full migration to the AWS LZ is complete).
+description: Builds and publishes a Helm chart package to Knox's S3 registry.
 
 inputs:
   # TODO: We should default this when GitHub allows for private actions/workflows repos for non-enterprise customers...
@@ -23,16 +21,6 @@ inputs:
     description: Helm repository name (within the Helm registry).
     default: knox
     required: false
-  legacy-aws-build-role-arn:
-    description: Account IAM Role ARN to assume to publish Helm package to legacy account.
-    required: false
-  legacy-helm-repo-name:
-    description: |
-      Helm repository name within legacy account registry (this is different for each development team).
-      inter-bank: monetae
-      gomono:     stable/identity
-      sandbox:    stable/identity
-    required: false
 
 runs:
   using: composite
@@ -49,22 +37,10 @@ runs:
         role-to-assume: ${{ inputs.aws-build-role-arn }}
         aws-region: ${{ inputs.aws-region }}
 
-    - name: Build / Publish Helm Package
+    - name: helm package deploy
       shell: bash
       run: |
         helm repo add ${{ inputs.helm-repo-name }} s3://knox.us-east-2.helm-registry/${{ inputs.helm-repo-name }}
         helm package ${{ inputs.helm-directory }}
         helm s3 push --force ${{ inputs.helm-package-name }}-*.tgz ${{ inputs.helm-repo-name }}
 
-    - name: (Legacy) Authenticate via AWS IAM OIDC Provider
-      uses: aws-actions/configure-aws-credentials@v1-node16
-      with:
-        role-to-assume: ${{ inputs.legacy-aws-build-role-arn }}
-        aws-region: ${{ inputs.aws-region }}
-
-    - name: (Legacy) Build / Publish Helm Package
-      shell: bash
-      run: |
-        helm repo add legacy-${{ inputs.helm-repo-name }} s3://knox-helm-charts/${{ inputs.legacy-helm-repo-name }}
-        helm package ${{ inputs.helm-directory }}
-        helm s3 push --force ${{ inputs.helm-package-name }}-*.tgz legacy-${{ inputs.helm-repo-name }}

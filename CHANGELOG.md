@@ -3,6 +3,15 @@
 _The following sections summarize the changes made throughout this project and the approximate date each of the changes_
 _were made._
 
+## [12/16/2022]
+
+* `action/build-helm-package`
+  * Modified action to include functionality / inputs to publish to legacy S3 Helm registry.
+  * Documentation updates.
+* `action/build-helm-package-v2`
+  * Action introduced from `action/build-helm-package` _without_ the functionality to publish to legacy S3 Helm
+    registry.
+
 ## [12/08/2022]
 
 * `slack-notification-workflow-invoked.yml`
